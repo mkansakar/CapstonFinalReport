@@ -20,7 +20,10 @@ library(qdap)
 library(rJava)
 library(RWeka)
 
-setwd("D:\\downloads\\Class\\Capstone\\files\\final\\en_US")
+## Sys.setenv(JAVA_HOME="C:\\Program Files\\Internet Explorer\\Plugins\\Hyperion\\11.1.1.4\\JRE\\Sun\\1.5.0\\bin\\")
+## Sys.setenv(JAVA_HOME="C:\\Program Files (x86)\\Java\\jre1.8.0_45\\bin\\")
+## getTransformations()
+setwd("H:\\Class\\Capstone\\final\\en_US")
 
 #loading all of the data from the txt files
 blogs <- readLines("en_US.blogs.txt")
@@ -28,25 +31,25 @@ news <- readLines("en_US.news.txt")
 twitter <- readLines("en_US.twitter.txt")
 
 # load the profanity list file
-profanity <- readLines("D:\\downloads\\Class\\Capstone\\files\\profanity.txt")
+profanity <- readLines("H:\\Class\\Capstone\\profanity.txt")
 
 set.seed(123)
 blogs <- blogs[rbinom(length(blogs)*.1, length(blogs), .5)]
-write.csv(blogs, file = "D:\\downloads\\Class\\Capstone\\files\\blog.sample.csv", 
+write.csv(blogs, file = "H:\\Class\\Capstone\\Sample\\blog.sample.csv", 
           row.names = FALSE, col.names = FALSE)
 
 set.seed(123)
 news <- news[rbinom(length(news)*.1, length(news), .5)]
-write.csv(news, file = "D:\\downloads\\Class\\Capstone\\files\\news.sample.csv", 
+write.csv(news, file = "H:\\Class\\Capstone\\Sample\\news.sample.csv", 
           row.names = FALSE, col.names = FALSE)
 
 set.seed(123)
 twitter <- twitter[rbinom(length(twitter)*.1, length(twitter), .5)]
-write.csv(twitter, file = "D:\\downloads\\Class\\Capstone\\files\\twitter.sample.csv", 
+write.csv(twitter, file = "H:\\Class\\Capstone\\Sample\\twitter.sample.csv", 
           row.names = FALSE, col.names = FALSE)
 
 # put all of the samples into one Corpus document
-corpusExampleDoc <- Corpus(DirSource("D:\\downloads\\Class\\Capstone\\files\\"), readerControl = list(language="en_US"))
+corpusExampleDoc <- Corpus(DirSource("H:\\Class\\Capstone\\Sample\\"), readerControl = list(language="en_US"))
 
 rm(blogs, news, twitter)
 
@@ -130,46 +133,13 @@ prepare.data <- function(dt, number) {
   ou$output <- a
   ou
 }
+gc()
 
 dt.four <- prepare.data(dt.four.raw, 4)
 dt.tri <- prepare.data(dt.tri.raw, 3)
 dt.bi <- prepare.data(dt.bi.raw, 2)
 dt.one <- prepare.data(dt.one.raw, 1)
 
-save(dt.one, dt.bi, dt.tri, dt.four, file = "C:\\Users\\David\\Documents\\GitHub\\CapstonFinalReport\\ngram.RData")
-
-
-next.word <- function(text) {
-  #First split the sentence into words
-  words_list <- strsplit(text, split = " ")
-  # Select the last three words to make prediction
-  words <- words_list[[1]]
-  nWords <- length(words)
-  fourgram <- paste(words[nWords - 2], words[nWords - 1], words[nWords], collapse = " ")
-  trigram <- paste(words[nWords - 1], words[nWords], collapse = " ")
-  bigram <- words[nWords]
-  if (sum(dt.four$look == fourgram)>0) {
-    result <- as.character(dt.four[dt.four$look == fourgram, c("output")])
-  }
-  else {
-    if (sum(dt.tri$look == trigram)>0) {
-      result <- as.character(dt.tri[dt.tri$look == trigram, c("output")])
-    }
-    else {
-      if (sum(dt.bi$look == bigram)>0) {
-        result <- as.character(dt.bi[dt.bi$look == bigram, c("output")])
-      }
-      else {
-        index <- sample(1:100, 1)
-        result <- dt.one[index]
-      }
-    }
-  }
-  result
-}
- 
-#next.word("enter something")
-
-
-
-
+save(dt.four, file = "H:\\Class\\Capstone\\saveddata\\fourgram.RData")
+save(dt.tri,  file = "H:\\Class\\Capstone\\saveddata\\three.RData")
+save(dt.bi, file = "H:\\Class\\Capstone\\saveddata\\twogram.RData")

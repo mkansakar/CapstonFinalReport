@@ -1,32 +1,28 @@
-#
-# This is the user-interface definition of a Shiny web application. You can
-# run the application by clicking 'Run App' above.
-#
-# Find out more about building applications with Shiny here:
-# 
-#    http://shiny.rstudio.com/
-#
+suppressPackageStartupMessages(c(
+  library(shinythemes),
+  library(shiny),
+  library(tm),
+  library(stringr),
+  library(markdown),
+  library(stylo)))
 
-library(shiny)
-library(MASS)
-
-ngram <- load("C:\\Users\\David\\Documents\\GitHub\\CapstonFinalReport\\ngram.RData")
-
-shinyUI(fluidPage(
-  
-  # Application title
-  titlePanel("Find the possible next word in the sentance"),
-  
-  # Sidebar with a slider input for number of bins 
-  sidebarLayout(
-    sidebarPanel(
-      textInput(inputId="textsample",label="Enter in the text and will try and find next word",value = "Enter something")
-    ),
-    
-    mainPanel(
-      h3(textOutput("textsample")),
-      helpText('     '),
-      textOutput("answer")
-    )
-  )
-))
+shinyUI(navbarPage("Coursera Data Science Capstone Final Report", 
+                   theme = shinytheme("flatly"),
+                   tabPanel("Next Word Prediction",
+                            fluidRow(
+                              column(3),
+                              column(6,
+                                     tags$div(textInput("text", 
+                                                        label = h3("Enter your text here in english:"),
+                                                        value = ),
+                                              br(),
+                                              tags$hr(),
+                                              h4("The predicted next word is:"),
+                                              tags$span(style="color:purple",
+                                                        tags$strong(tags$h3(textOutput("predictedWord")))),
+                                              br(),
+                                              tags$hr(),
+                                              h4("You entered:"),
+                                              tags$em(tags$h4(textOutput("enteredWords"))),
+                                              align="center")
+                              )))))
